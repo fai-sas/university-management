@@ -6,8 +6,6 @@ import {
   TStudent,
   TUserName,
 } from './student.interface'
-import bcrypt from 'bcrypt'
-import config from '../../config'
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -88,10 +86,6 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'User is required'],
       unique: true,
       ref: 'User',
-    },
-    password: {
-      type: String,
-      required: [true, 'password is required'],
     },
     name: {
       type: userNameSchema,
