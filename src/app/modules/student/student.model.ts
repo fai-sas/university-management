@@ -83,6 +83,12 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'ID is required'],
       unique: true,
     },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'User is required'],
+      unique: true,
+      ref: 'User',
+    },
     password: {
       type: String,
       required: [true, 'password is required'],
@@ -154,19 +160,6 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     timestamps: true,
   }
 )
-
-studentSchema.pre('save', async function (next) {
-  this.password = await bcrypt.hash(
-    this.password,
-    Number(config.bcrypt_salt_rounds)
-  )
-  next()
-})
-
-studentSchema.post('save', function (doc, next) {
-  doc.password = ''
-  next()
-})
 
 // query middleware
 
