@@ -3,6 +3,7 @@ import { Model, Types } from 'mongoose'
 export type TStudent = {
   id: string
   user: Types.ObjectId
+  admissionSemester: Types.ObjectId
   password: string
   name: TUserName
   gender: 'male' | 'female' | 'other'
