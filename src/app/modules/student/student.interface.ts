@@ -4,6 +4,7 @@ export type TStudent = {
   id: string
   user: Types.ObjectId
   admissionSemester: Types.ObjectId
+  academicDepartment: Types.ObjectId
   password: string
   name: TUserName
   gender: 'male' | 'female' | 'other'
