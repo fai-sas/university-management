@@ -18,6 +18,7 @@ export type TAdmin = {
 }
 
 export type TGender = 'male' | 'female' | 'other'
+
 export type TBloodGroup =
   | 'A+'
   | 'A-'
