@@ -5,6 +5,7 @@ import httpStatus from 'http-status'
 import { TStudent } from './student.interface'
 import QueryBuilder from '../../builder/QueryBuilder'
 import { studentSearchableFields } from './student.constant'
+import { User } from '../user/user.model'
 
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   const studentQuery = new QueryBuilder(
@@ -96,6 +97,19 @@ const deleteStudentFromDB = async (id: string) => {
 
     if (!deletedStudent) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete student')
+    }
+
+    // get user _id from deletedStudent
+    const userId = deletedStudent.user
+
+    const deletedUser = await User.findByIdAndUpdate(
+      userId,
+      { isDeleted: true },
+      { new: true, session, runValidators: true }
+    )
+
+    if (!deletedUser) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete user')
     }
 
     session.commitTransaction()
