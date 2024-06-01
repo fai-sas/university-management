@@ -1,4 +1,4 @@
-import { Types } from 'mongoose'
+import { Model, Types } from 'mongoose'
 
 export type TAdmin = {
   id: string
@@ -33,4 +33,8 @@ export type TUserName = {
   firstName: string
   middleName: string
   lastName: string
+}
+
+export interface AdminModel extends Model<TAdmin> {
+  isUserExists(id: string): Promise<TAdmin | null>
 }
