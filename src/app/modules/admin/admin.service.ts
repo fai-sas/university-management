@@ -1,5 +1,5 @@
-const getAllAdminsFromDB = async () => {}
-const getSingleAdminFromDB = async () => {}
+const getAllAdminsFromDB = async (query: Record<string, unknown>) => {}
+const getSingleAdminFromDB = async (adminId: string) => {}
 const updateAdminIntoDB = async () => {}
 const deleteAdminFromDB = async () => {}
 
