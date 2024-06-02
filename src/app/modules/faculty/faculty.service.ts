@@ -4,7 +4,10 @@ import { TFaculty } from './faculty.interface'
 import { Faculty } from './faculty.model'
 
 const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
-  const facultyQuery = new QueryBuilder(Faculty.find(), query)
+  const facultyQuery = new QueryBuilder(
+    Faculty.find().populate('academicDepartment'),
+    query
+  )
     .search(FacultySearchableFields)
     .filter()
     .sort()
@@ -16,7 +19,10 @@ const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
   return result
 }
 
-const getSingleFacultyFromDB = async (id: string) => {}
+const getSingleFacultyFromDB = async (id: string) => {
+  const result = await Faculty.findById(id).populate('academicDepartment')
+  return result
+}
 
 const updateFacultyIntoDB = async (id: string, payload: Partial<TFaculty>) => {}
 
