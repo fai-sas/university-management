@@ -19,7 +19,6 @@ const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
     .fields()
 
   const result = await facultyQuery.modelQuery
-
   return result
 }
 
@@ -28,6 +27,26 @@ const getSingleFacultyFromDB = async (id: string) => {
   return result
 }
 
+// const updateFacultyIntoDB = async (id: string, payload: Partial<TFaculty>) => {
+//   const { name, ...remainingFacultyData } = payload
+
+//   const modifiedUpdatedData: Record<string, unknown> = {
+//     ...remainingFacultyData,
+//   }
+
+//   if (name && Object.keys(name).length) {
+//     for (const [key, value] of Object.entries(name)) {
+//       modifiedUpdatedData[`name.${key}`] = value
+//     }
+//   }
+
+//   const result = await Faculty.findOneAndUpdate({ id }, modifiedUpdatedData, {
+//     new: true,
+//     runValidators: true,
+//   })
+
+//   return result
+// }
 const updateFacultyIntoDB = async (id: string, payload: Partial<TFaculty>) => {
   const { name, ...remainingFacultyData } = payload
 
@@ -41,11 +60,10 @@ const updateFacultyIntoDB = async (id: string, payload: Partial<TFaculty>) => {
     }
   }
 
-  const result = await Faculty.findOneAndUpdate({ id }, modifiedUpdatedData, {
+  const result = await Faculty.findByIdAndUpdate(id, modifiedUpdatedData, {
     new: true,
     runValidators: true,
   })
-
   return result
 }
 
