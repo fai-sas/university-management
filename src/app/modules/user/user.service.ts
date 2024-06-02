@@ -5,7 +5,7 @@ import { TStudent } from '../student/student.interface'
 import { Student } from '../student/student.model'
 import { TUser } from './user.interface'
 import { User } from './user.model'
-import { generateStudentId } from './user.utils'
+import { generateAdminId, generateStudentId } from './user.utils'
 import AppError from '../../errors/AppError'
 import httpStatus from 'http-status'
 import { TAdmin } from '../admin/admin.interface'
@@ -79,8 +79,8 @@ const createAdminIntoDB = async (password: string, payload: TAdmin) => {
   try {
     session.startTransaction()
 
-    // userData.id = await generateAdminId()
-    userData.id = 'A-0002'
+    // userData.id = 'A-0001'
+    userData.id = await generateAdminId()
 
     // create a user (transaction-1)
     const newUser = await User.create([userData], { session })
@@ -107,6 +107,7 @@ const createAdminIntoDB = async (password: string, payload: TAdmin) => {
   } catch (err: any) {
     await session.abortTransaction()
     await session.endSession()
+    console.log(err)
     throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create admin')
   }
 }

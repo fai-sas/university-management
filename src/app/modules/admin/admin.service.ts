@@ -57,14 +57,8 @@ const deleteAdminFromDB = async (id: string) => {
 
     const deletedAdmin = await Admin.findByIdAndUpdate(
       id,
-      {
-        isDeleted: true,
-      },
-      {
-        new: true,
-        session,
-        runValidators: true,
-      }
+      { isDeleted: true },
+      { new: true, session }
     )
 
     if (!deletedAdmin) {
@@ -76,28 +70,22 @@ const deleteAdminFromDB = async (id: string) => {
 
     const deletedUser = await User.findOneAndUpdate(
       userId,
-      {
-        isDeleted: true,
-      },
-      {
-        new: true,
-        session,
-        runValidators: true,
-      }
+      { isDeleted: true },
+      { new: true, session }
     )
 
     if (!deletedUser) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete user')
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete admin')
     }
 
-    session.commitTransaction()
-    session.endSession()
+    await session.commitTransaction()
+    await session.endSession()
 
     return deletedAdmin
-  } catch (error) {
-    session.abortTransaction()
-    session.endSession()
-    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete student')
+  } catch (err: any) {
+    await session.abortTransaction()
+    await session.endSession()
+    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete admin')
   }
 }
 
