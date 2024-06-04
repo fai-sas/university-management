@@ -1,5 +1,7 @@
-const createCourseIntoDB = async () => {}
-const getAllCoursesFromDB = async () => {}
+import { TCourse } from './course.interface'
+
+const createCourseIntoDB = async (payload: TCourse) => {}
+const getAllCoursesFromDB = async (query: Record<string, unknown>) => {}
 const getSingleCourseFromDB = async () => {}
 const updateCourseIntoDB = async () => {}
 const deleteCourseFromDB = async () => {}
