@@ -2,9 +2,12 @@ import { TCourse } from './course.interface'
 
 const createCourseIntoDB = async (payload: TCourse) => {}
 const getAllCoursesFromDB = async (query: Record<string, unknown>) => {}
-const getSingleCourseFromDB = async () => {}
-const updateCourseIntoDB = async () => {}
-const deleteCourseFromDB = async () => {}
+const getSingleCourseFromDB = async (id: string) => {}
+const updateCourseIntoDB = async (
+  id: string,
+  payload: Record<string, unknown>
+) => {}
+const deleteCourseFromDB = async (id: string) => {}
 const assignFacultiesWithCourseIntoDB = async () => {}
 const removeFacultiesFromCourseFromDB = async () => {}
 
