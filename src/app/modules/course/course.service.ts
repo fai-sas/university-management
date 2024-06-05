@@ -1,6 +1,10 @@
 import { TCourse, TCourseFaculty } from './course.interface'
+import { Course } from './course.model'
 
-const createCourseIntoDB = async (payload: TCourse) => {}
+const createCourseIntoDB = async (payload: TCourse) => {
+  const result = await Course.create(payload)
+  return result
+}
 
 const getAllCoursesFromDB = async (query: Record<string, unknown>) => {}
 
