@@ -37,7 +37,15 @@ const updateCourseIntoDB = async (
   payload: Record<string, unknown>
 ) => {}
 
-const deleteCourseFromDB = async (id: string) => {}
+const deleteCourseFromDB = async (id: string) => {
+  const result = await Course.findByIdAndUpdate(
+    id,
+    { isDeleted: true },
+    { new: true, runValidators: true }
+  )
+
+  return result
+}
 
 const assignFacultiesWithCourseIntoDB = async (
   id: string,
