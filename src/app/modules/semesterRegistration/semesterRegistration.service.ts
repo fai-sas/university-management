@@ -5,6 +5,7 @@ import { TSemesterRegistration } from './semesterRegistration.interface'
 import { SemesterRegistration } from './semesterRegistration.model'
 import { AcademicSemester } from '../academicSemester/academicSemester.model'
 import QueryBuilder from '../../builder/QueryBuilder'
+import mongoose from 'mongoose'
 
 const createSemesterRegistrationIntoDB = async (
   payload: TSemesterRegistration
@@ -145,7 +146,46 @@ const updateSemesterRegistrationIntoDB = async (
   return result
 }
 
-const deleteSemesterRegistrationFromDB = async (id: string) => {}
+const deleteSemesterRegistrationFromDB = async (id: string) => {
+  /** 
+  * Step1: Delete associated offered courses.
+  * Step2: Delete semester registration when the status is 
+  'UPCOMING'.
+  **/
+
+  const isSemesterRegistrationExists = await SemesterRegistration.findById(id)
+
+  if (!isSemesterRegistrationExists) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'This registered semester is not found !'
+    )
+  }
+
+  // checking if the status is still "UPCOMING"
+
+  const semesterRegistrationStatus = isSemesterRegistrationExists?.status
+
+  if (semesterRegistrationStatus === RegistrationStatus.UPCOMING) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `You can not delete as the registered semester is ${semesterRegistrationStatus}`
+    )
+  }
+
+  const session = await mongoose.startSession()
+
+  try {
+    session.startTransaction()
+  } catch (error) {
+    await session.abortTransaction()
+    await session.endSession()
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Failed to delete semester registration !'
+    )
+  }
+}
 
 export const SemesterRegistrationService = {
   createSemesterRegistrationIntoDB,
