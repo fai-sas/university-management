@@ -4,6 +4,7 @@ import { RegistrationStatus } from './semesterRegistration.constant'
 import { TSemesterRegistration } from './semesterRegistration.interface'
 import { SemesterRegistration } from './semesterRegistration.model'
 import { AcademicSemester } from '../academicSemester/academicSemester.model'
+import QueryBuilder from '../../builder/QueryBuilder'
 
 const createSemesterRegistrationIntoDB = async (
   payload: TSemesterRegistration
@@ -57,9 +58,26 @@ const createSemesterRegistrationIntoDB = async (
 
 const getAllSemesterRegistrationsFromDB = async (
   query: Record<string, unknown>
-) => {}
+) => {
+  const semesterRegistrationQuery = new QueryBuilder(
+    SemesterRegistration.find().populate('academicSemester'),
+    query
+  )
+    .filter()
+    .sort()
+    .paginate()
+    .fields()
 
-const getSingleSemesterRegistrationsFromDB = async (id: string) => {}
+  const result = await semesterRegistrationQuery.modelQuery
+  return result
+}
+
+const getSingleSemesterRegistrationsFromDB = async (id: string) => {
+  const result = await SemesterRegistration.findById(id).populate(
+    'academicSemester'
+  )
+  return result
+}
 
 const updateSemesterRegistrationIntoDB = async (
   id: string,
