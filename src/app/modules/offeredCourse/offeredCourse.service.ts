@@ -1,6 +1,15 @@
 import { TOfferedCourse } from './offeredCourse.interface'
 
-const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {}
+const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
+  const {
+    semesterRegistration,
+    academicSemester,
+    academicFaculty,
+    academicDepartment,
+    course,
+    faculty,
+  } = payload
+}
 
 const getAllOfferedCoursesFromDB = async (query: Record<string, unknown>) => {}
 
