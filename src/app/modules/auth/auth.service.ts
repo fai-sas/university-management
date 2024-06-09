@@ -97,7 +97,7 @@ const changePassword = async (
 
   await User.findOneAndUpdate(
     {
-      id: userData.id,
+      id: userData.userId,
       role: userData.role,
     },
     {
@@ -105,7 +105,7 @@ const changePassword = async (
       passwordChangedAt: new Date(),
     }
   )
-  return null
+  // return null
 }
 
 const refreshToken = async (token: string) => {
