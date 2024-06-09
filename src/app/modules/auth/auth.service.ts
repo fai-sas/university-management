@@ -1,5 +1,6 @@
 import { JwtPayload } from 'jsonwebtoken'
 import { TLoginUser } from './auth.interface'
+import { User } from '../user/user.model'
 
 const loginUser = async (payload: TLoginUser) => {}
 
