@@ -1,8 +1,14 @@
-const loginUser = async () => {}
+import { JwtPayload } from 'jsonwebtoken'
+import { TLoginUser } from './auth.interface'
 
-const changePassword = async () => {}
+const loginUser = async (payload: TLoginUser) => {}
 
-const refreshToken = async () => {}
+const changePassword = async (
+  userData: JwtPayload,
+  payload: { oldPassword: string; newPassword: string }
+) => {}
+
+const refreshToken = async (token: string) => {}
 
 export const AuthServices = {
   loginUser,
