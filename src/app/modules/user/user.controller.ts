@@ -2,6 +2,7 @@ import status from 'http-status'
 import sendResponse from '../../utils/sendResponse'
 import { UserServices } from './user.service'
 import catchAsync from '../../utils/catchAsync'
+import httpStatus from 'http-status'
 
 const createStudent = catchAsync(async (req, res) => {
   const { password, student: studentData } = req.body
@@ -42,8 +43,22 @@ const createFaculty = catchAsync(async (req, res) => {
   })
 })
 
+const getCurrentUser = catchAsync(async (req, res) => {
+  const { userId, role } = req.user
+
+  const result = await UserServices.getCurrentUser(userId, role)
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User is retrieved successfully',
+    data: result,
+  })
+})
+
 export const UserControllers = {
   createStudent,
   createAdmin,
   createFaculty,
+  getCurrentUser,
 }
