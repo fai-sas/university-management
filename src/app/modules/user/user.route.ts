@@ -5,6 +5,7 @@ import { createStudentValidationSchema } from '../student/student.validation'
 import { createAdminValidationSchema } from '../admin/admin.validation'
 import { createFacultyValidationSchema } from '../faculty/faculty.validation'
 import auth from '../../middlewares/auth'
+import { UserValidation } from './user.validation'
 
 const router = express.Router()
 
@@ -23,6 +24,13 @@ router.post(
   '/create-faculty',
   validateRequest(createFacultyValidationSchema),
   UserControllers.createFaculty
+)
+
+router.post(
+  '/change-status/:id',
+  auth('admin'),
+  validateRequest(UserValidation.changeStatusValidationSchema),
+  UserControllers.changeStatus
 )
 
 router.get(
