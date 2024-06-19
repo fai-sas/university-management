@@ -6,6 +6,7 @@ import AppError from '../../errors/AppError'
 import httpStatus from 'http-status'
 import { createToken } from './auth.utils'
 import config from '../../config'
+import { sendEmail } from '../../utils/sendEmail'
 
 const loginUser = async (payload: TLoginUser) => {
   // check if the user exists
@@ -188,13 +189,15 @@ const forgetPassword = async (userId: string) => {
     role: user.role,
   }
 
-  const token = createToken(
+  const resetToken = createToken(
     jwtPayload,
     config.jwt_access_secret as string,
     '10m'
   )
 
-  const resetPasswordLink = `http://localhost:5000/${user.id}&token=${token}`
+  const resetPasswordLink = `${config.reset_password_ui_link}?id=${user.id}&token=${resetToken} `
+
+  sendEmail(user.email, resetPasswordLink)
 
   console.log({ resetPasswordLink })
 }
