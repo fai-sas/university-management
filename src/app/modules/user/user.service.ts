@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose'
 import config from '../../config'
 import { AcademicSemester } from '../academicSemester/academicSemester.model'
@@ -16,8 +17,13 @@ import { TAdmin } from '../admin/admin.interface'
 import { Admin } from '../admin/admin.model'
 import { Faculty } from '../faculty/faculty.model'
 import { TFaculty } from '../faculty/faculty.interface'
+import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary'
 
-const createStudentIntoDB = async (password: string, payload: TStudent) => {
+const createStudentIntoDB = async (
+  file: any,
+  password: string,
+  payload: TStudent
+) => {
   // create an user object
   const userData: Partial<TUser> = {}
 
@@ -33,12 +39,21 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     payload.admissionSemester
   )
 
+  if (!admissionSemester) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Admission Semester Not Found')
+  }
+
   const session = await mongoose.startSession()
 
   try {
     session.startTransaction()
     //set generated id
     userData.id = await generateStudentId(admissionSemester)
+
+    const imageName = `${userData.id}${payload?.name?.firstName}`
+    const path = file?.path
+    //send image to cloudinary
+    const { secure_url } = await sendImageToCloudinary(imageName, path)
 
     // create an user (transaction-1)
     const newUser = await User.create([userData], { session }) // array
@@ -52,12 +67,13 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
 
     payload.id = newUser[0].id // auto generated id
     payload.user = newUser[0]._id // reference id
+    payload.profileImg = secure_url
 
     // create a student (transaction-2)
     const newStudent = await Student.create([payload], { session }) // array
 
     if (!newStudent.length) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student')
+      throw new AppError(httpStatus.BAD_REQUEST, `${error?.message}`)
     }
 
     await session.commitTransaction()
@@ -67,7 +83,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   } catch (error) {
     await session.abortTransaction()
     await session.endSession()
-    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student')
+    throw new AppError(httpStatus.BAD_REQUEST, `${error?.message}`)
   }
 }
 
