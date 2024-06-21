@@ -21,6 +21,7 @@ class QueryBuilder<T> {
         ),
       })
     }
+
     return this
   }
 
@@ -60,8 +61,22 @@ class QueryBuilder<T> {
       (this?.query?.fields as string)?.split(',')?.join(' ') || '-__v'
 
     this.modelQuery = this.modelQuery.select(selectFields)
-
     return this
+  }
+
+  async countTotal() {
+    const totalQueries = this.modelQuery.getFilter()
+    const total = await this.modelQuery.model.countDocuments(totalQueries)
+    const page = Number(this?.query?.page) || 1
+    const limit = Number(this?.query?.limit) || 10
+    const totalPage = Math.ceil(total / limit)
+
+    return {
+      page,
+      limit,
+      total,
+      totalPage,
+    }
   }
 }
 
