@@ -50,10 +50,14 @@ const createStudentIntoDB = async (
     //set generated id
     userData.id = await generateStudentId(admissionSemester)
 
-    const imageName = `${userData.id}${payload?.name?.firstName}`
-    const path = file?.path
-    //send image to cloudinary
-    const { secure_url } = await sendImageToCloudinary(imageName, path)
+    if (file) {
+      const imageName = `${userData.id}-${payload?.name?.firstName}`
+      const path = file?.path
+
+      //send image to cloudinary
+      const { secure_url } = await sendImageToCloudinary(imageName, path)
+      payload.profileImg = secure_url as string
+    }
 
     // create an user (transaction-1)
     const newUser = await User.create([userData], { session }) // array
@@ -67,7 +71,6 @@ const createStudentIntoDB = async (
 
     payload.id = newUser[0].id // auto generated id
     payload.user = newUser[0]._id // reference id
-    payload.profileImg = secure_url
 
     // create a student (transaction-2)
     const newStudent = await Student.create([payload], { session }) // array
@@ -86,6 +89,86 @@ const createStudentIntoDB = async (
     throw new AppError(httpStatus.BAD_REQUEST, `${error?.message}`)
   }
 }
+
+// const createStudentIntoDB = async (
+//   file: any,
+//   password: string,
+//   payload: TStudent
+// ) => {
+//   // create a user object
+//   const userData: Partial<TUser> = {}
+
+//   //if password is not given , use default password
+//   userData.password = password || (config.default_password as string)
+
+//   //set student role
+//   userData.role = 'student'
+//   // set student email
+//   userData.email = payload.email
+
+//   // find academic semester info
+//   const admissionSemester = await AcademicSemester.findById(
+//     payload.admissionSemester
+//   )
+
+//   if (!admissionSemester) {
+//     throw new AppError(400, 'Admission semester not found')
+//   }
+
+//   // find department
+//   const academicDepartment = await AcademicDepartment.findById(
+//     payload.academicDepartment
+//   )
+
+//   if (!academicDepartment) {
+//     throw new AppError(400, 'Academic department not found')
+//   }
+//   // payload.academicFaculty = academicDepartment.academicFaculty
+
+//   const session = await mongoose.startSession()
+
+//   try {
+//     session.startTransaction()
+//     //set  generated id
+//     userData.id = await generateStudentId(admissionSemester)
+
+//     if (file) {
+//       const imageName = `${userData.id}${payload?.name?.firstName}`
+//       const path = file?.path
+
+//       //send image to cloudinary
+//       const { secure_url } = await sendImageToCloudinary(imageName, path)
+//       payload.profileImg = secure_url as string
+//     }
+
+//     // create a user (transaction-1)
+//     const newUser = await User.create([userData], { session }) // array
+
+//     //create a student
+//     if (!newUser.length) {
+//       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user')
+//     }
+//     // set id , _id as user
+//     payload.id = newUser[0].id
+//     payload.user = newUser[0]._id //reference _id
+
+//     // create a student (transaction-2)
+//     const newStudent = await Student.create([payload], { session })
+
+//     if (!newStudent.length) {
+//       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student')
+//     }
+
+//     await session.commitTransaction()
+//     await session.endSession()
+
+//     return newStudent
+//   } catch (err: any) {
+//     await session.abortTransaction()
+//     await session.endSession()
+//     throw new Error(err)
+//   }
+// }
 
 const createAdminIntoDB = async (password: string, payload: TAdmin) => {
   // create a user object
